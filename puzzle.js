@@ -198,7 +198,7 @@ async function unlockBook() {
 
   const a = document.createElement("a");
   a.href = url;
-  a.download = `WITCH_Book_${currentBook + 1}.pdf`;
+  a.download = books[currentBook].pdf.split("/").pop();
   document.body.appendChild(a);
   a.click();
   a.remove();
