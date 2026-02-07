@@ -25,3 +25,7 @@ canvas {
   max-width: 95vw;
   height: auto;
 }
+
+canvas {
+  touch-action: none;
+}

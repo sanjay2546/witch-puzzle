@@ -90,9 +90,21 @@ function createPieces() {
   canvas.onmousemove = movePiece;
   canvas.onmouseup = dropPiece;
 
-  canvas.ontouchstart = e => pickPiece(e.touches[0]);
-  canvas.ontouchmove = e => movePiece(e.touches[0]);
-  canvas.ontouchend = dropPiece;
+  canvas.addEventListener("touchstart", e => {
+  e.preventDefault();
+  pickPiece(e.touches[0]);
+}, { passive: false });
+
+canvas.addEventListener("touchmove", e => {
+  e.preventDefault();
+  movePiece(e.touches[0]);
+}, { passive: false });
+
+canvas.addEventListener("touchend", e => {
+  e.preventDefault();
+  dropPiece();
+}, { passive: false });
+
 }
 
 /* ================================
