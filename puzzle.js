@@ -51,14 +51,18 @@ function startGame() {
     continueBtn.addEventListener("click", () => {
       const modal = document.getElementById("unlockModal");
       modal.classList.add("hidden");
+      modal.style.display = "none";
       if (_unlockBlobUrl) {
         URL.revokeObjectURL(_unlockBlobUrl);
         _unlockBlobUrl = null;
       }
       isUnlocking = false;
       currentBook++;
-      if (currentBook < books.length) loadPuzzle();
-      else document.getElementById("title").innerText = "All Stories Recovered ❤️";
+      if (currentBook < books.length) {
+        setTimeout(() => loadPuzzle(), 100);
+      } else {
+        document.getElementById("title").innerText = "All Stories Recovered ❤️";
+      }
     });
     continueBtn._attached = true;
   }
@@ -258,6 +262,23 @@ async function unlockBook() {
   isUnlocking = true;
 
   try {
+    // Show modal with loading message immediately
+    const modal = document.getElementById("unlockModal");
+    const modalInner = modal?.querySelector(".modal-inner");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const continueBtn = document.getElementById("continueBtn");
+    
+    if (modal) {
+      modal.classList.remove("hidden");
+      modal.style.display = "flex";
+    }
+    
+    // Show loading state
+    if (modalInner) {
+      const originalContent = modalInner.innerHTML;
+      modalInner.innerHTML = `<p>Downloading book...</p>`;
+    }
+
     const res = await fetch(books[currentBook].pdf);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const blob = await res.blob();
@@ -265,26 +286,64 @@ async function unlockBook() {
     const url = URL.createObjectURL(blob);
     _unlockBlobUrl = url;
 
-    const downloadBtn = document.getElementById("downloadBtn");
+    // Update modal with download button
     if (downloadBtn) {
       downloadBtn.href = url;
       downloadBtn.download = books[currentBook].pdf.split("/").pop();
       downloadBtn.setAttribute("role", "link");
+      downloadBtn.setAttribute("target", "_blank");
       downloadBtn.style.display = "inline-block";
     }
 
-    // Show modal and wait for user to press Continue to proceed
-    const modal = document.getElementById("unlockModal");
-    if (modal) {
-      modal.classList.remove("hidden");
-      modal.style.display = "flex";
-    } else {
-      console.error("Modal not found");
+    // Restore modal content
+    if (modalInner) {
+      modalInner.innerHTML = `
+        <h3>Book unlocked</h3>
+        <p>You can download the recovered book below.</p>
+        <div class="modal-actions">
+          <a id="downloadBtn" class="btn">Download</a>
+          <button id="continueBtn" class="btn">Continue</button>
+        </div>
+      `;
+      
+      // Re-attach download button
+      const newDownloadBtn = modalInner.querySelector("#downloadBtn");
+      if (newDownloadBtn) {
+        newDownloadBtn.href = url;
+        newDownloadBtn.download = books[currentBook].pdf.split("/").pop();
+        newDownloadBtn.setAttribute("role", "link");
+        newDownloadBtn.setAttribute("target", "_blank");
+      }
+      
+      // Re-attach continue button
+      const newContinueBtn = modalInner.querySelector("#continueBtn");
+      if (newContinueBtn) {
+        newContinueBtn.addEventListener("click", () => {
+          modal.classList.add("hidden");
+          modal.style.display = "none";
+          if (_unlockBlobUrl) {
+            URL.revokeObjectURL(_unlockBlobUrl);
+            _unlockBlobUrl = null;
+          }
+          isUnlocking = false;
+          currentBook++;
+          if (currentBook < books.length) {
+            setTimeout(() => loadPuzzle(), 100);
+          } else {
+            document.getElementById("title").innerText = "All Stories Recovered ❤️";
+          }
+        });
+      }
     }
 
   } catch (err) {
     console.error("Unlock failed", err);
     alert(`Error downloading book: ${err.message}. Try refreshing the page.`);
     isUnlocking = false;
+    const modal = document.getElementById("unlockModal");
+    if (modal) {
+      modal.classList.add("hidden");
+      modal.style.display = "none";
+    }
   }
 }
