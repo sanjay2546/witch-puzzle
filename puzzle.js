@@ -4,7 +4,7 @@
 
 const books = [
   { cover: "covers/The Salamander's Heart scan.jpg", pdf: "pdfs/The Salamander's Heart scan.PDF" },
-  { cover: "covers/Brimstone Music scan.jpg", pdf: "Brimstone Music scan.PDF" },
+  { cover: "covers/Brimstone Music scan.jpg", pdf: "pdfs/Brimstone Music scan.PDF" },
   { cover: "covers/Merefire scan.jpg", pdf: "pdfs/Merefire scan.PDF" },
   { cover: "covers/Green Fingers scan.jpg", pdf: "pdfs/Green Fingers scan.PDF" },
   { cover: "covers/The Cruel Empress scan TH.jpg", pdf: "pdfs/The Cruel Empress scan TH.PDF" }
