@@ -1,0 +1,27 @@
+body {
+  background: #0d0d14;
+  color: white;
+  font-family: system-ui;
+  text-align: center;
+  padding: 40px;
+}
+
+button {
+  padding: 12px 24px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+canvas {
+  margin-top: 20px;
+  border: 2px solid white;
+}
+
+.hidden {
+  display: none;
+}
+
+canvas {
+  max-width: 95vw;
+  height: auto;
+}
