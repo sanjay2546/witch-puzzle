@@ -24,6 +24,7 @@ let selected = null;
 let img = null;
 let isUnlocking = false;
 let _unlockBlobUrl = null;
+let isLoadingPuzzle = false;
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -92,6 +93,11 @@ function startGame() {
 ================================ */
 
 function loadPuzzle() {
+  // Prevent checkSolved from firing during load
+  isLoadingPuzzle = true;
+  selected = null;
+  pieces = [];
+  
   document.getElementById(
     "title"
   ).innerText = `Recovered Fragment — Book ${currentBook + 1}`;
@@ -107,6 +113,12 @@ function loadPuzzle() {
     canvas.width = maxH * ratio;
 
     createPieces();
+    isLoadingPuzzle = false;
+  };
+  
+  img.onerror = () => {
+    console.error("Failed to load image for book", currentBook);
+    isLoadingPuzzle = false;
   };
 }
 
@@ -191,7 +203,7 @@ function draw() {
 ================================ */
 
 function pickPiece(e) {
-  if (isUnlocking) return;
+  if (isUnlocking || isLoadingPuzzle) return;
   const r = canvas.getBoundingClientRect();
   const mx = e.clientX - r.left;
   const my = e.clientY - r.top;
@@ -213,7 +225,7 @@ function pickPiece(e) {
 
 function movePiece(e) {
   if (!selected) return;
-  if (isUnlocking) return;
+  if (isUnlocking || isLoadingPuzzle) return;
 
   const r = canvas.getBoundingClientRect();
   selected.x = e.clientX - r.left - selected.w / 2;
@@ -243,6 +255,8 @@ function dropPiece() {
 ================================ */
 
 function checkSolved() {
+  if (isLoadingPuzzle) return;
+  
   if (
     pieces.every(
       p => p.x === p.correctX && p.y === p.correctY
