@@ -4,10 +4,10 @@
 
 const books = [
   { cover: "covers/The Salamander's Heart scan.jpg", pdf: "pdfs/The Salamander's Heart scan.PDF" },
-  { cover: "covers/book2.jpg", pdf: "pdfs/book2.pdf" },
-  { cover: "covers/book3.jpg", pdf: "pdfs/book3.pdf" },
-  { cover: "covers/book4.jpg", pdf: "pdfs/book4.pdf" },
-  { cover: "covers/book5.jpg", pdf: "pdfs/book5.pdf" }
+  { cover: "covers/Brimstone Music scan.jpg", pdf: "Brimstone Music scan.PDF" },
+  { cover: "covers/Merefire scan.jpg", pdf: "pdfs/Merefire scan.PDF" },
+  { cover: "covers/Green Fingers scan.jpg", pdf: "pdfs/Green Fingers scan.PDF" },
+  { cover: "covers/The Cruel Empress scan TH.jpg", pdf: "pdfs/The Cruel Empress scan TH.PDF" }
 ];
 
 const rows = 4;
