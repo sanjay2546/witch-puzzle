@@ -114,6 +114,9 @@ canvas.addEventListener("touchend", e => {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+  // Only draw if image is loaded
+  if (!img || !img.complete) return;
+
   pieces.forEach(p => {
     ctx.drawImage(
       img,
@@ -211,6 +214,7 @@ async function unlockBook() {
   const a = document.createElement("a");
   a.href = url;
   a.download = books[currentBook].pdf.split("/").pop();
+  a.setAttribute("download", "");
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -220,7 +224,10 @@ async function unlockBook() {
   currentBook++;
 
   if (currentBook < books.length) {
-    loadPuzzle();
+    // Small delay to ensure Safari doesn't interfere
+    setTimeout(() => {
+      loadPuzzle();
+    }, 100);
   } else {
     document.getElementById("title").innerText =
       "All Stories Recovered ❤️";
