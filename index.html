@@ -3,19 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <title>Recovered Stories</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<div id="intro">
-  <h1>Five Stories Were Lost.</h1>
-  <p>Put them back together.</p>
-  <button onclick="startGame()">Start</button>
+<div id="intro" class="intro-container">
+  <div class="intro-card">
+    <h1>✨ Five Stories Were Lost ✨</h1>
+    <p>Put them back together and uncover the magic within.</p>
+    <button onclick="startGame()" class="btn-pill">Begin Adventure</button>
+  </div>
 </div>
 
-<div id="game" class="hidden">
-  <h2 id="title">Recovered Fragment — Book 1</h2>
-  <canvas id="canvas" width="600" height="600"></canvas>
+<div id="game" class="hidden game-container">
+  <h2 id="title" class="game-title">Recovered Fragment — Book 1</h2>
+  <div class="canvas-wrapper">
+    <canvas id="canvas" width="600" height="600"></canvas>
+  </div>
 </div>
 
 <!-- Unlock modal shown when a book is recovered; user taps to download then continue -->
