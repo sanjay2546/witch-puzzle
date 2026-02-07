@@ -57,6 +57,21 @@ canvas {
   border-radius: 8px;
 }
 
-.modal-actions { margin-top: 12px; display:flex; gap:12px; justify-content:center; }
-.modal-actions .btn { background:#222; color:#fff; padding:10px 14px; border-radius:6px; text-decoration:none; display:inline-block; }
+.modal-actions { margin-top: 16px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+.modal-actions .btn { 
+  background:#4CAF50; 
+  color:#fff; 
+  padding:12px 20px; 
+  border-radius:6px; 
+  text-decoration:none; 
+  display:inline-block; 
+  border:none;
+  cursor:pointer;
+  font-size:16px;
+  font-weight:bold;
+  transition: background 0.2s;
+}
+.modal-actions .btn:hover { background:#45a049; }
 .modal-actions .btn:active { transform: translateY(1px); }
+#downloadBtn { background:#0066cc; }
+#downloadBtn:hover { background:#0052a3; }

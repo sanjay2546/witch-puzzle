@@ -10,8 +10,8 @@ const books = [
   { cover: "covers/The Cruel Empress scan TH.jpg", pdf: "pdfs/The Cruel Empress scan TH.PDF" }
 ];
 
-const rows = 4;
-const cols = 3;
+const rows = 2;
+const cols = 2;
 const SNAP = 20;
 
 /* ================================
@@ -259,6 +259,7 @@ async function unlockBook() {
 
   try {
     const res = await fetch(books[currentBook].pdf);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const blob = await res.blob();
 
     const url = URL.createObjectURL(blob);
@@ -268,16 +269,22 @@ async function unlockBook() {
     if (downloadBtn) {
       downloadBtn.href = url;
       downloadBtn.download = books[currentBook].pdf.split("/").pop();
-      // Make sure it's recognized as a link
       downloadBtn.setAttribute("role", "link");
+      downloadBtn.style.display = "inline-block";
     }
 
     // Show modal and wait for user to press Continue to proceed
     const modal = document.getElementById("unlockModal");
-    if (modal) modal.classList.remove("hidden");
+    if (modal) {
+      modal.classList.remove("hidden");
+      modal.style.display = "flex";
+    } else {
+      console.error("Modal not found");
+    }
 
   } catch (err) {
     console.error("Unlock failed", err);
+    alert(`Error downloading book: ${err.message}. Try refreshing the page.`);
     isUnlocking = false;
   }
 }
