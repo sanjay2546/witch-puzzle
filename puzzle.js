@@ -10,8 +10,8 @@ const books = [
   { cover: "covers/The Cruel Empress scan TH.jpg", pdf: "pdfs/The Cruel Empress scan TH.PDF" }
 ];
 
-const rows = 2;
-const cols = 2;
+const rows = 4;
+const cols = 3;
 const SNAP = 20;
 
 /* ================================
