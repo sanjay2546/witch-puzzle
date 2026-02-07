@@ -18,6 +18,18 @@
   <canvas id="canvas" width="600" height="600"></canvas>
 </div>
 
+<!-- Unlock modal shown when a book is recovered; user taps to download then continue -->
+<div id="unlockModal" class="hidden">
+  <div class="modal-inner">
+    <h3>Book unlocked</h3>
+    <p>You can download the recovered book below.</p>
+    <div class="modal-actions">
+      <a id="downloadBtn" class="btn">Download</a>
+      <button id="continueBtn" class="btn">Continue</button>
+    </div>
+  </div>
+</div>
+
 <script src="puzzle.js"></script>
 </body>
 </html>

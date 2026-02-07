@@ -22,6 +22,8 @@ let currentBook = 0;
 let pieces = [];
 let selected = null;
 let img = null;
+let isUnlocking = false;
+let _unlockBlobUrl = null;
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -33,6 +35,51 @@ const ctx = canvas.getContext("2d");
 function startGame() {
   document.getElementById("intro").classList.add("hidden");
   document.getElementById("game").classList.remove("hidden");
+  // Attach modal handlers once
+  const downloadBtn = document.getElementById("downloadBtn");
+  const continueBtn = document.getElementById("continueBtn");
+
+  if (downloadBtn && !downloadBtn._attached) {
+    downloadBtn.addEventListener("click", () => {
+      // clicking this link is a user gesture; download should be handled by browser
+      // hide the modal after click optionally, keep it until user continues
+    });
+    downloadBtn._attached = true;
+  }
+
+  if (continueBtn && !continueBtn._attached) {
+    continueBtn.addEventListener("click", () => {
+      const modal = document.getElementById("unlockModal");
+      modal.classList.add("hidden");
+      if (_unlockBlobUrl) {
+        URL.revokeObjectURL(_unlockBlobUrl);
+        _unlockBlobUrl = null;
+      }
+      isUnlocking = false;
+      currentBook++;
+      if (currentBook < books.length) loadPuzzle();
+      else document.getElementById("title").innerText = "All Stories Recovered ❤️";
+    });
+    continueBtn._attached = true;
+  }
+
+  // Redraw when returning to the page (fixes black canvas after coming back from download)
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      if (!img || !img.complete) {
+        // reload image so we can redraw
+        if (img && img.src) {
+          const src = img.src;
+          img = new Image();
+          img.src = src;
+          img.onload = () => draw();
+        }
+      } else {
+        draw();
+      }
+    }
+  });
+
   loadPuzzle();
 }
 
@@ -140,6 +187,7 @@ function draw() {
 ================================ */
 
 function pickPiece(e) {
+  if (isUnlocking) return;
   const r = canvas.getBoundingClientRect();
   const mx = e.clientX - r.left;
   const my = e.clientY - r.top;
@@ -161,6 +209,7 @@ function pickPiece(e) {
 
 function movePiece(e) {
   if (!selected) return;
+  if (isUnlocking) return;
 
   const r = canvas.getBoundingClientRect();
   selected.x = e.clientX - r.left - selected.w / 2;
@@ -192,12 +241,10 @@ function dropPiece() {
 function checkSolved() {
   if (
     pieces.every(
-      p =>
-        p.x === p.correctX &&
-        p.y === p.correctY
+      p => p.x === p.correctX && p.y === p.correctY
     )
   ) {
-    setTimeout(unlockBook, 600);
+    if (!isUnlocking) setTimeout(unlockBook, 600);
   }
 }
 
@@ -206,30 +253,31 @@ function checkSolved() {
 ================================ */
 
 async function unlockBook() {
-  const res = await fetch(books[currentBook].pdf);
-  const blob = await res.blob();
+  // Prevent re-entry
+  if (isUnlocking) return;
+  isUnlocking = true;
 
-  const url = URL.createObjectURL(blob);
+  try {
+    const res = await fetch(books[currentBook].pdf);
+    const blob = await res.blob();
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = books[currentBook].pdf.split("/").pop();
-  a.setAttribute("download", "");
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
+    const url = URL.createObjectURL(blob);
+    _unlockBlobUrl = url;
 
-  URL.revokeObjectURL(url);
+    const downloadBtn = document.getElementById("downloadBtn");
+    if (downloadBtn) {
+      downloadBtn.href = url;
+      downloadBtn.download = books[currentBook].pdf.split("/").pop();
+      // Make sure it's recognized as a link
+      downloadBtn.setAttribute("role", "link");
+    }
 
-  currentBook++;
+    // Show modal and wait for user to press Continue to proceed
+    const modal = document.getElementById("unlockModal");
+    if (modal) modal.classList.remove("hidden");
 
-  if (currentBook < books.length) {
-    // Small delay to ensure Safari doesn't interfere
-    setTimeout(() => {
-      loadPuzzle();
-    }, 100);
-  } else {
-    document.getElementById("title").innerText =
-      "All Stories Recovered ❤️";
+  } catch (err) {
+    console.error("Unlock failed", err);
+    isUnlocking = false;
   }
 }
